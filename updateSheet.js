@@ -35,33 +35,6 @@ function getCatalog() {
 //var fields = Object.keys(catalog.dataset[0]).filter(field => ['distribution','publisher','@type'].indexOf(field) < 0);
 var rows = [];
 
-/*
-metadata": {
-    "rdfSubject": "0",
-    "custom_fields": {
-      "Melbourne Metadata": {
-        "Time period covered": "2009 - 2013"
-      },
-      "Data management": {
-        "Custodian unit/team": "",
-        "Update mechanism": "",
-        "Data custodian email": "Yuriy Onyshchuk",
-        "Source systems(s) (GIS, AssetMaster, etc)": ""
-      },
-      "Quality": {
-        "Reliability level": "",
-        "Source data update frequency": "Uploaded around the 10th of each month.",
-        "What's included": "All data held by the City of Melbourne has been included"
-      },
-      "How to use": {
-        "Further information": "",
-        "Alerts": "",
-        "Applicable standard (URL)": "",
-        "Linked to": "http://www.pedestrian.melbourne.vic.gov.au/"
-      }
-    },
-
- */
 var found = {
   'Quality':{},
   'How to use':{},
@@ -108,21 +81,6 @@ function getRows(catalog) {
                 });
 
                 
-                /*if (!props.metadata.custom_fields) {
-                    props.metadata.custom_fields = {
-                        'Melbourne Metadata': {},
-                        'Data management': {},
-                        'Quality': {},
-                        'How to use': {}
-                    };
-                }
-                var metadata = props.metadata.custom_fields['Melbourne Metadata'];
-
-                // translate some of our lengthy field names into something shorter 
-                metafields.metadataFields.forEach((mfield,i) => {
-                    row[metafields.metadataFieldsOutput[i]] = metadata[mfield];
-                });
-                //console.log(row);*/
                 return row;
             });
         }, { concurrency: 10 }
@@ -148,73 +106,3 @@ function updateFromSocrata() {
         .then(sheets.updateSheet)
         .then(() => log.high('Done!'));
 }
-
-//(rows => console.log(rows[0]));
-
-
-
-
-          /*// Add standard fields
-            var row = fields.map(field => {
-                var val = dataset[field];
-                if (field === 'contactPoint') {
-                    val = val.hasEmail ? val.hasEmail : '';
-                }
-                return val;
-            });
-            // add one special prop - data owner's screen name.
-            //row.push(props.owner.screenName);
-            if (!props.metadata.custom_fields) {
-                props.metadata.custom_fields = {'Melbourne Metadata': {}};
-            }
-            // add custom fields
-            var metadata = props.metadata.custom_fields['Melbourne Metadata'];
-            metadataFields.forEach(field => row.push(metadata[field]));
-            return row;*/
-  
-
-
-    /*
-    return Promise.all(
-        catalog.dataset
-        //.filter((dataset, rownum) => rownum < 2000) // ??
-        .map((dataset, rownum) => {
-            var row = getDatasetValues(dataset);
-
-            return rp({
-                uri: dataset.identifier + '.json',
-                json: true
-            }).then(props => {
-                //row.push(fdate(props.publicationDate));
-                row.push(props.owner.screenName);
-                if (!props.metadata.custom_fields) {
-                    props.metadata.custom_fields = {'Melbourne Metadata': {}};
-                }
-                var metadata = props.metadata.custom_fields['Melbourne Metadata'];
-                metadataFields.forEach(field => row.push(metadata[field]));
-                return row;
-            });
-        })
-    );
-    */
-/*
-// uses the titles of each field
-// turn array of arrays into array of objects: [ { field1: 1, field2: 'bleh' }, { field1: 0, field2: 'meh' } ... ]
-getRows().then(rows => {
-    var sorows = rows.map(row => {
-        var sorow = {};
-        fields.forEach((field, i) => sorow[field] = row[i]);
-        metadataFieldsOutput.forEach((field, i) => sorow[field] = row[fields.length + i + 1]);
-        return sorow;
-    });
-    // console.log(rows[0]);
-    // console.log(JSON.stringify(sorows[0]));
-
-
-
-    return require('./sheets').updateSheet(sorows);
-    //console.log(fields.join(',') + ',Owner,Data quality,Original upload,Spatial dataset,Update frequency,Version number,Data completeness statement');
-    //rows.forEach(row => console.log('"' + row.map(printify).join('","') + '"'));
-});
-
-*/
