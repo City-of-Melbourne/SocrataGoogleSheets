@@ -1,0 +1,21 @@
+{
+  "name": "socrata",
+  "version": "1.0.0",
+  "description": "",
+  "main": "tocsv.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Steve Bennett <me@stevebennett.me> (http://stevebennett.me)",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "colors": "^1.1.2",
+    "google-drive-sheets": "^1.3.0",
+    "google-spreadsheet": "^2.0.3",
+    "moment": "^2.15.1",
+    "request": "^2.75.0",
+    "request-promise": "^4.1.1",
+    "yargs": "^6.6.0"
+  }
+}
