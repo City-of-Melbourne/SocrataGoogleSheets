@@ -54,6 +54,7 @@ module.exports.updateSheet = function(socrataRows) {
             row = rows.filter(row => row['identifier'] === sorow.identifier)[0];
             if (row) {
                 log.low('Update Sheet: ' + row['identifier'].replace('https://data.melbourne.vic.gov.au/api/views/', '').blue);
+                log.debug(JSON.stringify(sorow, undefined, 2));
                 //console.log(Object.keys(row));
                 //console.log(sorow);
                 Object.keys(sorow).forEach(sokey => row[sokey] = sorow[sokey]);
@@ -91,7 +92,10 @@ module.exports.getColumn = function(fieldName) {
         .then(getHeaderRow)
         .then(header => {
             var idColNum = header.indexOf('identifier');
-            var fieldColNum = header.indexOf(fieldName);
+            var fieldColNum = header.map(h => h.toLowerCase()).indexOf(fieldName.toLowerCase());
+            if (fieldColNum < 0) {
+                throw `Field name not found: ${fieldName}`;
+            }
             return Promise.all([getCol(idColNum), getCol(fieldColNum)])
                 .then(results => 
                     results[0].map((id, i) => 

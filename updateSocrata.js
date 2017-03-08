@@ -14,8 +14,12 @@ var sheet = sheets.getSheet();
 
 function saveMetadata(id, metadata) {
     //return;
-    if (id !== 'fthi-zajy')
+    if (options.dryrun) {
+        log.low('(Not really)');
         return;
+    }
+    if (id !== 'fthi-zajy')
+        //return;
     ;
     //console.log(`Updating ${id}: ${JSON.stringify(metadata)}`);
     //return;
@@ -44,9 +48,13 @@ function getMetadata(rowid) {
 Usage: `updateFromColumn('Proposed title')`
 where "Proposed title" is header (row 1) value of a column 
 */
-module.exports.updateFromColumn = function(columnName, options) {
-    var socrataField = metafields.nameToField(columnName.replace(/Proposed /i, ''));
+var options;
+module.exports.updateFromColumn = function(columnName, opts) {
+    options = opts;
+
+    log.setLevel(3 - options.verbose);
     if (!options) options = {};
+    var socrataField = metafields.nameToField(columnName.replace(/Proposed /i, ''));
     sheets.getColumn(columnName)
     .then(vals => { 
         return Promise.map(vals, newval => { 
@@ -67,11 +75,7 @@ module.exports.updateFromColumn = function(columnName, options) {
                         newval.value = newval.value.split(',');
                     }
                     old = metadata[socrataFieldName];
-
-
-
-                    // ##Why did I add XX??
-                    if (JSON.stringify(old+'XX') !== JSON.stringify(newval.value)) {
+                    if (options.unchanged || JSON.stringify(old) !== JSON.stringify(newval.value)) {
                         //log.medium(`${newval.id}/${socrataFieldName}: ${old} -> ${newval.value}`);    
                         log.medium(`${newval.id.blue}/${socrataFieldName.yellow}: "${String(old).green}" -> "${String(newval.value).green}"`);    
                         let payload = {};
@@ -79,8 +83,7 @@ module.exports.updateFromColumn = function(columnName, options) {
 
                         return saveMetadata(newval.id, payload);
                     } else {
-                        // value hasn't changed
-                        log.low('Skipping');
+                        log.low(`${newval.id.blue}/${socrataFieldName.yellow}: "${String(old).green}" Unchanged, skipping`);
                     }
                 } else {
                     // updating a custom metadata field
@@ -91,6 +94,7 @@ module.exports.updateFromColumn = function(columnName, options) {
                         metadata.metadata.custom_fields[socrataField.fieldset][socrataField.field] = newval.value;
                         // strip unwanted fieldsets.
                         delete(metadata.metadata.custom_fields['Melbourne Metadata']);
+                        log.debug(JSON.stringify(metadata.metadata, null, 2));
                         return saveMetadata(newval.id, { metadata: metadata.metadata });
                     }
                 }

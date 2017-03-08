@@ -51,7 +51,7 @@ function getRows(catalog) {
     return Promise.map(catalog.dataset
         .filter((x, rownum) => rownum < LIMIT /*&& x.identifier === 'https://data.melbourne.vic.gov.au/api/views/k64i-2xff'*/), 
         dataset => {
-            log.low(dataset.identifier + '.json');
+            log.low('Get ' + dataset.identifier + '.json');
             return rp.getJson(dataset.identifier + '.json')
             .then(props => {
                 //console.log(props);
@@ -87,7 +87,8 @@ function getRows(catalog) {
     );
 }
 
-function updateFromSocrata() {
+module.exports.updateFromSocrata = function(options) {
+    log.setLevel(3 - options.verbose);
     return getCatalog()
         .then(getRows)
         .tap(() => {
@@ -105,4 +106,4 @@ function updateFromSocrata() {
         })
         .then(sheets.updateSheet)
         .then(() => log.high('Done!'));
-}
+};

@@ -1,6 +1,10 @@
 var colors = require('colors/safe');
+loglevel = 2;
 
-var loglevel = 2;
+module.exports.setLevel = function(level) {
+    if (level !== undefined)
+        loglevel = level;
+};
 
 module.exports.debug = function(message) {
     if (loglevel <= 0)
