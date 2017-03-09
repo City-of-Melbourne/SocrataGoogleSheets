@@ -3,6 +3,7 @@ var P = Promise.promisifyAll;
 /* jshint esnext:true */
 //var GoogleSheets = require('google-drive-sheets');
 var GoogleSheets = require('google-spreadsheet');
+var config = require('./config');
 var log = require('./log');
 var colors = require('colors');
 var sheet;
@@ -11,11 +12,11 @@ function getSheet(sheetnum) {
         return Promise.resolve(sheet);
     if (sheetnum === undefined)
         sheetnum = 1;// second sheet
-    var creds = require('./API Project-9399330dfd2e.json');
+    
 
-    var sheets = P(new GoogleSheets('1M-imvcnNaXu4KngE8xuSeFiQTZey3YF2qYAIcxYmY18'));
+    var sheets = P(new GoogleSheets(config.sheetId));
 
-    return sheets.useServiceAccountAuthAsync(creds)
+    return sheets.useServiceAccountAuthAsync(config.sheetCredentials)
         .then(() => sheets.getInfoAsync())
         .then(info => {
             log.medium('Using sheet: ' + info.worksheets[sheetnum].title);

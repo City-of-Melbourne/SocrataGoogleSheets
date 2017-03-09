@@ -1,11 +1,11 @@
 'use strict';
 var Promise = require('bluebird');
 var log = require('./log');
-/* jshint esnext:true */
+/* jshint esnext:true, node:true */
 var rp = require('./requestPromiseJson');
 
 var moment = require('moment');
-var secret = require('./secretSteve.json');
+var config = require('./config');
 var metafields = require('./metafields');
 var colors = require('colors');
 
@@ -29,10 +29,10 @@ function saveMetadata(id, metadata) {
         uri: 'https://data.melbourne.vic.gov.au/api/views/' + id + '.json',
         json: true,
         auth: {
-            username: secret.email,
-            password: secret.password,
+            username: config.socrataAuth.email,
+            password: config.socrataAuth.password,
         }, headers: {
-            'X-App-Token': secret.appToken
+            'X-App-Token': config.socrataAuth.appToken
         }, body: metadata
     }).then(response => {
         // no need to log?
